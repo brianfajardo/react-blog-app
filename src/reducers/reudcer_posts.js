@@ -10,6 +10,7 @@ export default function (state = INITIAL_STATE, action) {
     switch (action.type) {
         case FETCH_POSTS:
             // Take the current state and add the resolved action payload data (all blog posts)
+            // Reducer needs to return a new object (not a Promise) whenever we return our updated state
             // Note: we use the spread operator in order to avoid mutating state!
             return { ...state, all: action.payload.data }
         default:
