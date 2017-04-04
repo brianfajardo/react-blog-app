@@ -9,7 +9,9 @@ const INITIAL_STATE = { all: [], post: null }
 export default function (state = INITIAL_STATE, action) {
     switch (action.type) {
         case FETCH_POSTS:
-
+            // Take the current state and add the resolved action payload data (all blog posts)
+            // Note: we use the spread operator in order to avoid mutating state!
+            return { ...state, all: action.payload.data }
         default:
             return state
     }
