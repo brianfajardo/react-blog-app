@@ -11,6 +11,19 @@ class PostIndex extends Component {
     componentWillMount() {
         this.props.fetchPosts()
     }
+
+    renderPosts() {
+        return this.props.posts.map(post => {
+            return (
+                <li className='list-group-item' key={post.id}>
+                    <span className='pull-xs-right'>{post.categories}</span>
+                    <strong>{post.title}</strong>
+                    {/*Note: in index route, only id, title and categories are fetched from server*/}
+                </li>
+            )
+        })
+    }
+
     render() {
         return (
             <div>
@@ -20,10 +33,17 @@ class PostIndex extends Component {
                         Create Post
                     </Link>
                 </div>
-                List of blog posts
+                <h3>Posts</h3>
+                <ul className='list-group'>
+                    {this.renderPosts()}
+                </ul>
             </div>
         )
     }
+}
+
+function mapStateToProps(state) {
+    return { posts: state.posts.all }
 }
 
 // function mapDispatchToProps(dispatch) {
@@ -31,4 +51,4 @@ class PostIndex extends Component {
 // }
 
 // Quick little shortcut with ES6 syntax to replace writing mapDispatchToProps function
-export default connect(null, { fetchPosts })(PostIndex)
+export default connect(mapStateToProps, { fetchPosts })(PostIndex)
