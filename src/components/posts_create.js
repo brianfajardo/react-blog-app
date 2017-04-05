@@ -1,10 +1,29 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
 import { Link } from 'react-router'
 
 import { createPost } from '../actions/index'
 
 class PostCreate extends Component {
+    // Want access off a property on a parent component and declare it in this component
+    // Avoid context in general, only should use with Router
+    static contextTypes = {
+        // Tells this component to expect an object to be available over context
+        router: PropTypes.object
+    }
+
+    // Props are from the form (title, categories, content)
+    onSubmit(props) {
+        // createPost is an axios request (Promise), redux-promise resolves and therefore we can continue to chain methods onto it
+        this.props.createPost(props)
+            .then(() => {
+            // Blog post created, navigate user to index
+            // Note: only when blog post is successfully created do we go to this step
+            // Navigate by calling this.context.router.push with the new path
+            this.context.router.push('/')
+        })
+    }
+
     render() {
         // Picking properties off this.props with ES6 destructuring
         const { fields: { title, categories, content }, handleSubmit } = this.props
@@ -12,7 +31,7 @@ class PostCreate extends Component {
         return (
             // handleSubmit is an injected prop from redux-form
             // this function tells redux-form the user is trying to submit this form and that it should check for validation
-            <form onSubmit={handleSubmit(this.props.createPost)}>
+            <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
                 <h3>Create a Post!</h3>
 
                 {/*if conditions are true, renders error as red (BootStrap!)*/}

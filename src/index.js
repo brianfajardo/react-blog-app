@@ -8,7 +8,7 @@ import promise from 'redux-promise'
 import reducers from './reducers'
 import routes from './routes'
 
-// Make sure actions flow through this redux-promise before reaching reducers
+// Make sure actions flow through redux-promise before reaching reducers
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore)
 
 ReactDOM.render(
