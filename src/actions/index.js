@@ -1,10 +1,11 @@
 import axios from 'axios'
 
 export const FETCH_POSTS = 'FETCH_POSTS'
+export const CREATE_POST = 'CREATE_POST'
 
-const ROOT_URL = 'http://reduxblog.herokuapp.com/api'
+const ROOT_URL = 'https://reduxblog.herokuapp.com/api'
 // Random unique key
-const API_KEY = '?key=gentlebreeze0000'
+const API_KEY = '?key=r3act_is_awesome'
 
 export function fetchPosts() {
     // axios will resolve this Promise (middleware)
@@ -12,6 +13,16 @@ export function fetchPosts() {
 
     return {
         type: FETCH_POSTS,
+        payload: request
+    }
+}
+
+export function createPost(props) {
+    // Pass properties with this post request
+    const request = axios.post(`${ROOT_URL}/posts${API_KEY}`, props)
+
+    return {
+        type: CREATE_POST,
         payload: request
     }
 }
