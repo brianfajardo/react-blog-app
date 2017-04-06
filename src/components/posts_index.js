@@ -18,10 +18,10 @@ class PostIndex extends Component {
                 <li className='list-group-item' key={post.id}>
                     {/*Use link to create an anchor tag on each individual post that will navigate to posts/:id*/}
                     <Link to={`posts/${post.id}`} >
-                        <span className='pull-xs-right'>{post.categories}</span>
                         <strong>{post.title}</strong>
-                        {/*Note: in index route, only id, title and categories are fetched from server*/}
                     </Link>
+                    <span className='pull-xs-right'>{post.categories}</span>
+                    {/*Note: in index route, only id, title and categories are fetched from server*/}
                 </li>
             )
         })
