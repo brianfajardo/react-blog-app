@@ -9,7 +9,7 @@ const ROOT_URL = 'https://reduxblog.herokuapp.com/api'
 // Random unique key
 const API_KEY = '?key=r3act_is_awesome'
 
-export function fetchPosts() {
+export const fetchPosts = () => {
     // axios will resolve this Promise (middleware)
     const request = axios.get(`${ROOT_URL}/posts${API_KEY}`)
 
@@ -19,7 +19,7 @@ export function fetchPosts() {
     }
 }
 
-export function createPost(props) {
+export const createPost = props => {
     // Pass properties with this post request
     const request = axios.post(`${ROOT_URL}/posts${API_KEY}`, props)
 
@@ -29,7 +29,7 @@ export function createPost(props) {
     }
 }
 
-export function fetchPost(id) {
+export const fetchPost = id => {
     const request = axios.get(`${ROOT_URL}/posts/${id}${API_KEY}`)
 
     return {
@@ -38,7 +38,7 @@ export function fetchPost(id) {
     }
 }
 
-export function deletePost(id) {
+export const deletePost = id => {
     const request = axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`)
 
     return {

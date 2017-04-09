@@ -91,7 +91,7 @@ class PostCreate extends Component {
 
 // values are the values of the inputs controlled by redux-form
 // if the object has a key that matches 1 of our field names and has a value that is truthy associated with it, redux-form assumes it is invalid -> prevent submission
-function validate(values) {
+const validate = values => {
     const errors = {}
 
     // Replace seperate if statements with a more robust and condensed method

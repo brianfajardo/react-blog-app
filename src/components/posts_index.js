@@ -45,9 +45,7 @@ class PostIndex extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return { posts: state.posts.all }
-}
+const mapStateToProps = state => ({ posts: state.posts.all })
 
 // function mapDispatchToProps(dispatch) {
 //     return bindActionCreators({ fetchPosts }, dispatch)
