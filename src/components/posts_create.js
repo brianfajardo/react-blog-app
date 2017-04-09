@@ -1,8 +1,26 @@
 import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
 import { Link } from 'react-router'
+import _ from 'lodash'
 
 import { createPost } from '../actions/index'
+
+// Refactor ['title', 'categories', 'content']
+// Create a top-level constant that has the configuration of the fields within form
+const FIELDS = {
+    title: {
+        type: 'input',
+        label: 'Creative title'
+    },
+    categories: {
+        type: 'input',
+        label: 'Related category tags'
+    },
+    content: {
+        type: 'textarea',
+        label: 'Post content'
+    }
+}
 
 class PostCreate extends Component {
     // Want access off a property on a parent component and declare it in this component
@@ -17,16 +35,38 @@ class PostCreate extends Component {
         // createPost is an axios request (Promise), redux-promise resolves and therefore we can continue to chain methods onto it
         this.props.createPost(props)
             .then(() => {
-            // Blog post created, navigate user to index
-            // Note: only when blog post is successfully created do we go to this step
-            // Navigate by calling this.context.router.push with the new path
-            this.context.router.push('/')
-        })
+                // Blog post created, navigate user to index
+                // Note: only when blog post is successfully created do we go to this step
+                // Navigate by calling this.context.router.push with the new path
+                this.context.router.push('/')
+            })
+    }
+
+    // renderField takes a field config object (type and label)
+    // Returns a rendered field
+    renderField(fieldConfig, field) {
+        // fieldHelper provided by redux-form
+        // One helper for each field that is declared in the reduxForm function below
+        const fieldHelper = this.props.fields[field]
+
+        return (
+            // if conditions are true, renders error as red (BootStrap!)
+            <div className={`form-group ${fieldHelper.touched && fieldHelper.invalid ? 'has-danger' : ''}`}>
+                <label>{fieldConfig.label}</label>
+                {/*Destructuring the object 'title' from props and passing it into this input*/}
+                {/*Instead of formProps={title} --> this.form.formProps.PROPERTY/METHOD*/}
+                <fieldConfig.type type='text' className='form-control' {...fieldHelper} />
+                {/*touch is a property that is false until the user touches the field in some way.*/}
+                {/*Gates whether the error is displayed/rendered onto the DOM*/}
+                {/*If touched and invalid, render error*/}
+                <div className='text-help'>{fieldHelper.touched ? fieldHelper.error : ''}</div>
+            </div >
+        )
     }
 
     render() {
         // Picking properties off this.props with ES6 destructuring
-        const { fields: { title, categories, content }, handleSubmit } = this.props
+        const { handleSubmit } = this.props
 
         return (
             // handleSubmit is an injected prop from redux-form
@@ -34,29 +74,8 @@ class PostCreate extends Component {
             <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
                 <h3>Create a Post!</h3>
 
-                {/*if conditions are true, renders error as red (BootStrap!)*/}
-                <div className={`form-group ${title.touched && title.invalid ? 'has-danger' : ''}`}>
-                    <label>Title</label>
-                    {/*Destructuring the object 'title' from props and passing it into this input */}
-                    {/*Instead of formProps={title} --> this.form.formProps.PROPERTY/METHOD*/}
-                    <input type='text' className='form-control' {...title} />
-                    {/*touch is a property that is false until the user touches the field in some way.*/}
-                    {/*Gates whether the error is displayed/rendered onto the DOM*/}
-                    {/*If touched and invalid, render error*/}
-                    <div className='text-help'>{title.touched ? title.error : ''}</div>
-                </div>
-
-                <div className={`form-group ${categories.touched && categories.invalid ? 'has-danger' : ''}`}>
-                    <label>Categories</label>
-                    <input type='text' className='form-control' {...categories} />
-                    <div className='text-help'>{categories.touched ? categories.error : ''}</div>
-                </div>
-
-                <div className={`form-group ${content.touched && content.invalid ? 'has-danger' : ''}`}>
-                    <label>Content</label>
-                    <textarea className='form-control'{...content} />
-                    <div className='text-help'>{content.touched ? content.error : ''}</div>
-                </div>
+                {/*need to bind(this) because we are making reference to props inside of the renderField function*/}
+                {_.map(FIELDS, this.renderField.bind(this))}
 
                 <Link to='/' className='btn btn-danger'>
                     Cancel
@@ -75,15 +94,12 @@ class PostCreate extends Component {
 function validate(values) {
     const errors = {}
 
-    if (!values.title) {
-        errors.title = 'Give your post a title!'
-    }
-    if (!values.categories) {
-        errors.categories = 'Enter categories your post falls under'
-    }
-    if (!values.content) {
-        errors.content = 'Write something! :^)'
-    }
+    // Replace seperate if statements with a more robust and condensed method
+    _.each(FIELDS, (type, field) => {
+        if (!values[field]) {
+            errors[field] = `Enter ${field}`
+        }
+    })
 
     return errors
 }
@@ -97,7 +113,9 @@ function validate(values) {
 // reduxForm: (form config, mapStateToProps, mapDispatchToProps)
 export default reduxForm({
     form: 'PostCreate',
-    fields: ['title', 'categories', 'content'],
+    // fields needs to be an array of strings
+    // Use lodash keys method which will return an array of all the different keys on the fields config object
+    fields: _.keys(FIELDS),
     validate
 }, null, { createPost })(PostCreate)
 
